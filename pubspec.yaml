@@ -1,0 +1,14 @@
+name: tll
+description: Experimental Dart DSL that compiles to LLVM IR (and hence native code)
+version: 0.0.1
+homepage: https://github.com/tejainece/tlang.git
+#author: SERAGUD <email@example.com>
+
+environment:
+  sdk: '>=1.20.1 <2.0.0'
+
+#dependencies:
+#  path: ^1.4.1
+
+dev_dependencies:
+  test: ^0.12.0
