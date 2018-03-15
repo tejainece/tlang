@@ -7,8 +7,10 @@ homepage: https://github.com/tejainece/tlang.git
 environment:
   sdk: '>=1.20.1 <2.0.0'
 
-#dependencies:
-#  path: ^1.4.1
+dependencies:
+  llvm: # ^1.4.1
+    path: ../llvm
+    # git: https://github.com/tejainece/llvm
 
 dev_dependencies:
   test: ^0.12.0

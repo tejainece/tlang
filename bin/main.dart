@@ -1,7 +1,5 @@
-import 'package:tll/tl.dart';
+import 'package:tll/tlang/tl.dart';
 import 'package:tll/tll.dart';
-
-
 
 main(List<String> arguments) {
   // lambda:
@@ -24,5 +22,16 @@ main(List<String> arguments) {
       .argument(b)
       .returns(tlI8)
       .statement(new TlReturn(new TlAddExpression(a.toVar, b.toVar)))
+      .toTl());
+
+  print(new TlTraitDecl('Shape')
+      .addField(new TlTraitProperty('sides', tlI8))
+      .addField(new TlTraitProperty('closed', tlI8))
+      .toTl());
+
+  print(new TlClassDecl('Rectangle')
+      .addTrait(new TlCustomType('Shape'))
+      .addField(new TlProperty('sides', tlI8))
+      .addField(new TlProperty('closed', tlI8))
       .toTl());
 }

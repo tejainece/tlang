@@ -1,3 +1,8 @@
+library tlang;
+
+part 'trait.dart';
+part 'class.dart';
+
 class ForTimeBeing {
   const ForTimeBeing();
 }
@@ -18,6 +23,14 @@ class TlVoid implements TlType {
   TlVar declare(String name) => new TlVar(name, this);
 }
 
+class TlBool implements TlType {
+  @override
+  String toTl() => 'Bool';
+
+  @override
+  TlVar declare(String name) => new TlVar(name, this);
+}
+
 class TlI8 implements TlType {
   @override
   String toTl() => 'I8';
@@ -26,18 +39,32 @@ class TlI8 implements TlType {
   TlVar declare(String name) => new TlVar(name, this);
 }
 
+class TlCustomType implements TlType {
+  String name;
+
+  TlCustomType(this.name);
+
+  @override
+  String toTl() => name;
+
+  @override
+  TlVar declare(String name) => new TlVar(name, this);
+}
+
 final tlI8 = new TlI8();
+
+final tlBool = new TlBool();
 
 final tlVoid = new TlVoid();
 
 abstract class TlStatement implements ToTl {}
 
-class TlArgument implements ToTl, ToVar {
+class TlArg implements ToTl, ToTlVar {
   TlType type;
 
   String name;
 
-  TlArgument(this.name, this.type);
+  TlArg(this.name, this.type);
 
   String toTl() {
     StringBuffer sb = new StringBuffer();
@@ -50,7 +77,7 @@ class TlArgument implements ToTl, ToVar {
   TlVar get toVar => new TlVar(name, type);
 }
 
-TlArgument tlI8Arg(String name) => new TlArgument(name, tlI8);
+TlArg tlI8Arg(String name) => new TlArg(name, tlI8);
 
 abstract class TlTopBlock implements ToTl {}
 
@@ -59,7 +86,7 @@ class TlFunc implements TlTopBlock {
 
   String name;
 
-  List<TlArgument> arguments = <TlArgument>[];
+  List<TlArg> arguments = <TlArg>[];
 
   // TODO List<TlType> optionalArguments;
 
@@ -74,7 +101,7 @@ class TlFunc implements TlTopBlock {
     return this;
   }
 
-  TlFunc argument(TlArgument arg) {
+  TlFunc argument(TlArg arg) {
     this.arguments.add(arg);
     return this;
   }
@@ -110,7 +137,7 @@ class TlLambda implements TlTopBlock {
 
   String name;
 
-  List<TlArgument> arguments = <TlArgument>[];
+  List<TlArg> arguments = <TlArg>[];
 
   // TODO List<TlType> optionalArguments;
 
@@ -125,7 +152,7 @@ class TlLambda implements TlTopBlock {
     return this;
   }
 
-  TlLambda argument(TlArgument arg) {
+  TlLambda argument(TlArg arg) {
     this.arguments.add(arg);
     return this;
   }
@@ -158,7 +185,7 @@ class TlLambda implements TlTopBlock {
 
 abstract class TlRhsExpression implements ToTl {}
 
-abstract class ToVar {
+abstract class ToTlVar {
   TlVar get toVar;
 }
 
@@ -207,160 +234,5 @@ class TlReturn implements TlStatement {
     sb.write(expression.toTl());
     sb.write(';');
     return sb.toString();
-  }
-}
-
-abstract class TlField implements ToTl {
-  String get name;
-}
-
-class TlProperty implements TlField, ToVar {
-  TlType type;
-
-  String name;
-
-  @override
-  TlVar get toVar => new TlVar(name, type);
-
-  @override
-  String toTl() {
-    StringBuffer sb = new StringBuffer();
-    sb.write('var ');
-    sb.write(name);
-    sb.write(': ');
-    sb.write(type.toTl());
-    sb.write(';');
-    return sb.toString();
-  }
-}
-
-abstract class TlMethodBase implements TlField {
-  String get name;
-
-  TlType get returnType;
-
-  List<TlArgument> get arguments;
-
-  // TODO List<TlType> get optionalArguments;
-}
-
-class TlMethod implements TlMethodBase {
-  TlType returnType;
-
-  String name;
-
-  List<TlArgument> arguments = <TlArgument>[];
-
-  // TODO List<TlType> optionalArguments;
-
-  List<TlStatement> statements = <TlStatement>[];
-
-  TlMethod(this.name);
-
-  bool get hasArguments => arguments.length != 0;
-
-  TlMethod returns(TlType returnType) {
-    this.returnType = returnType;
-    return this;
-  }
-
-  TlMethod argument(TlArgument arg) {
-    this.arguments.add(arg);
-    return this;
-  }
-
-  TlMethod statement(TlStatement st) {
-    this.statements.add(st);
-    return this;
-  }
-
-  @override
-  String toTl() {
-    StringBuffer sb = new StringBuffer();
-    sb.write('method ');
-    sb.write(name);
-    if (hasArguments) {
-      sb.write('(');
-      sb.write(arguments.map((a) => a.toTl()).join(', '));
-      sb.write(')');
-    }
-    if (returnType is! TlVoid) {
-      sb.write(': ');
-      sb.write(returnType.toTl());
-    }
-    sb.writeln('{');
-    statements.map((s) => s.toTl()).forEach(sb.writeln);
-    sb.write('}');
-    return sb.toString();
-  }
-}
-
-class TlLambdaMethod implements TlMethodBase {
-  TlType returnType;
-
-  String name;
-
-  List<TlArgument> arguments = <TlArgument>[];
-
-  // TODO List<TlType> optionalArguments;
-
-  TlRhsExpression expression;
-
-  TlLambdaMethod(this.name);
-
-  bool get hasArguments => arguments.length != 0;
-
-  TlLambdaMethod returns(TlType returnType) {
-    this.returnType = returnType;
-    return this;
-  }
-
-  TlLambdaMethod argument(TlArgument arg) {
-    this.arguments.add(arg);
-    return this;
-  }
-
-  TlLambdaMethod setExpression(TlRhsExpression exp) {
-    this.expression = exp;
-    return this;
-  }
-
-  @override
-  String toTl() {
-    StringBuffer sb = new StringBuffer();
-    sb.write('method ');
-    sb.write(name);
-    if (hasArguments) {
-      sb.write('(');
-      sb.write(arguments.map((a) => a.toTl()).join(', '));
-      sb.write(')');
-    }
-    if (returnType is! TlVoid) {
-      sb.write(': ');
-      sb.write(returnType.toTl());
-    }
-    sb.writeln(' => ');
-    sb.write(expression.toTl());
-    sb.write(';');
-    return sb.toString();
-  }
-}
-
-class TlTypeDecl implements ToTl {
-  String name;
-
-  List<TlType> traits = <TlType>[];
-
-  // TODO List<TlMixin> mixins = <TlMixin>[];
-
-  List<TlVar> fields = <TlVar>[];
-
-  List<TlMethodBase> methods = <TlMethodBase>[];
-
-  TlTypeDecl(this.name);
-
-  @override
-  String toTl() {
-
   }
 }
