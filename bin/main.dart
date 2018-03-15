@@ -4,6 +4,17 @@ import 'package:tll/tll.dart';
 
 
 main(List<String> arguments) {
+  // lambda:
+  //   name: add
+  //   returns: I8
+  //   args:
+  //     a: I8
+  //     b: I8
+  //   ret:
+  //     [+]:
+  //       a
+  //       b
+
   // func add => 5 + 5;
   final a = tlI8Arg('a');
   final b = tlI8Arg('b');
