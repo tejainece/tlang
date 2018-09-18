@@ -4,7 +4,7 @@ abstract class TlTraitField implements ToTl {
   String get name;
 }
 
-class TlTraitProperty implements TlTraitField, ToTlVar {
+class TlTraitProperty implements TlTraitField, ToVar {
   TlType type;
 
   String name;
@@ -12,7 +12,7 @@ class TlTraitProperty implements TlTraitField, ToTlVar {
   TlTraitProperty(this.name, this.type);
 
   @override
-  TlVar get toVar => new TlVar(name, type);
+  Var get toVar => new Var(name, type);
 
   @override
   String toTl() {
@@ -31,7 +31,7 @@ class TlTraitMethod implements TlTraitField {
 
   TlType returnType;
 
-  List<TlArg> arguments = <TlArg>[];
+  List<Arg> arguments = <Arg>[];
 
   // TODO List<TlType> optionalArguments;
 
@@ -44,7 +44,7 @@ class TlTraitMethod implements TlTraitField {
     return this;
   }
 
-  TlTraitMethod argument(TlArg arg) {
+  TlTraitMethod argument(Arg arg) {
     this.arguments.add(arg);
     return this;
   }
@@ -59,7 +59,7 @@ class TlTraitMethod implements TlTraitField {
       sb.write(arguments.map((a) => a.toTl()).join(', '));
       sb.write(')');
     }
-    if (returnType is! TlVoid) {
+    if (returnType is! Void) {
       sb.write(': ');
       sb.write(returnType.toTl());
     }

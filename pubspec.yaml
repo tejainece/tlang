@@ -8,8 +8,8 @@ environment:
   sdk: '>=1.20.1 <2.0.0'
 
 dependencies:
-  llvm: # ^1.4.1
-    path: ../llvm
+  llvmir: # ^1.4.1
+    path: ../llvmir
     # git: https://github.com/tejainece/llvm
 
 dev_dependencies:

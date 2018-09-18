@@ -1,4 +1,4 @@
-import 'package:tll/tlang/tl.dart';
+import 'package:tll/tlang/tlang.dart';
 import 'package:tll/tll.dart';
 
 main(List<String> arguments) {
@@ -17,11 +17,11 @@ main(List<String> arguments) {
   final a = tlI8Arg('a');
   final b = tlI8Arg('b');
 
-  print(new TlFunc('add')
+  print(new Func('add')
       .argument(a)
       .argument(b)
       .returns(tlI8)
-      .statement(new TlReturn(new TlAddExpression(a.toVar, b.toVar)))
+      .statement(new Return(new AddExpression(a.toVar, b.toVar)))
       .toTl());
 
   print(new TlTraitDecl('Shape')
